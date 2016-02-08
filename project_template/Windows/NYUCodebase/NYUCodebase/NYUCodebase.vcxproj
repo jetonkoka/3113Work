@@ -87,6 +87,9 @@
     <None Include="fragment_textured.glsl" />
     <None Include="vertex.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\3f5a00acf72df93528b6bb7cd0a4fd0c.jpeg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

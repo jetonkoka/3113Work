@@ -38,4 +38,9 @@
     <None Include="vertex.glsl" />
     <None Include="fragment_textured.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\3f5a00acf72df93528b6bb7cd0a4fd0c.jpeg">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
