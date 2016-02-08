@@ -176,6 +176,9 @@ int main(int argc, char *argv[])
 		glDisableVertexAttribArray(program.positionAttribute);
 		glDisableVertexAttribArray(program.texCoordAttribute);
 		modelMatrixForLilb.setPosition(0, -.5, 0);
+		
+
+
 
 
 		//==============================================================================================================================================================
