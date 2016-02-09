@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
 
 	glUseProgram(program.programID);
 	float lastFrameTicks = 0.0f;
-	float moveY = 0;
-	float moveX = 0;
+	float moveY = 1;
+	float moveX = 1;
 	
 
 
@@ -93,8 +93,8 @@ int main(int argc, char *argv[])
 		float elapsed = ticks - lastFrameTicks;
 		lastFrameTicks = ticks;
 
-		moveY += lastFrameTicks/1000000;
-	
+		moveY += lastFrameTicks/100 *elapsed;
+		moveX += .01 * elapsed;
 		
 
 
@@ -111,16 +111,15 @@ int main(int argc, char *argv[])
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glDisableVertexAttribArray(program.positionAttribute);
 		glDisableVertexAttribArray(program.texCoordAttribute);
-		if (moveX < 0.0004f)
+	/*	if (moveX < 3)
 		{
-			moveX += 0.00000001f;
 			modelMatrix.Translate(moveX, 0, 0);
 		}
 		else
 		{
 			moveX = 0;
 			modelMatrix.setPosition(-4, 0, 0);
-		}
+		}*/
 		
 		
 		//==============================================================================================================================================================
@@ -150,7 +149,7 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			modelMatrixForNyan.Translate(0, moveY/1000, 0);
+			modelMatrixForNyan.Translate(0, moveY/100, 0);
 		}
 		
 
