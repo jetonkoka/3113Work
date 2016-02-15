@@ -177,12 +177,13 @@ int main(int argc, char *argv[])
 
 
 	//coordinates for ball
+	//=================================================================================
 	float xPos = 0;
 	float yPos = -0.5f;
 	float speed = 0;
 	bool lessThan = true;
 	bool firstLoop = true;
-
+	//=================================================================================
 
 
 
@@ -209,7 +210,7 @@ int main(int argc, char *argv[])
 	//attributes for top boundary.
 	//==================================================================================
 	float bottomOfTopBoundary = .975;
-
+	//==================================================================================
 
 
 
@@ -228,6 +229,7 @@ int main(int argc, char *argv[])
 
 	SDL_Event event;
 	bool done = false;
+	bool winner;
 
 	while (!done) {
 		while (SDL_PollEvent(&event)) {
@@ -275,7 +277,6 @@ int main(int argc, char *argv[])
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glDisableVertexAttribArray(program.positionAttribute);
 		glDisableVertexAttribArray(program.texCoordAttribute);
-		//moveX = 0;
 		if (firstLoop)
 		{
 			modelMatrix.setPosition(-5, -.5, 0);
@@ -359,7 +360,6 @@ int main(int argc, char *argv[])
 
 
 		glBindTexture(GL_TEXTURE_2D, bottomBoundaries);
-		//float vertices2[] = { -.15, -.15, .15, -.15, .15, .15, -.15, -.15, .15, .15, -.15, .15 };
 		float vertices2[] = { -1, -.03, 1, -.03, 1, .03, -1, -.03, 1, .03, -1, .03 };
 		glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices2);
 		glEnableVertexAttribArray(program.positionAttribute);
@@ -378,11 +378,8 @@ int main(int argc, char *argv[])
 
 		
 		glBindTexture(GL_TEXTURE_2D, topBoundaries);
-		//float vertices2[] = { -.15, -.15, .15, -.15, .15, .15, -.15, -.15, .15, .15, -.15, .15 };
-		//float vertices2[] = { -1, -.03, 1, -.03, 1, .03, -1, -.03, 1, .03, -1, .03 };
 		glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices2);
 		glEnableVertexAttribArray(program.positionAttribute);
-		//float texCoords2[] = { 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0 };
 		glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords2);
 		glEnableVertexAttribArray(program.texCoordAttribute);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -401,7 +398,6 @@ int main(int argc, char *argv[])
 		program.setViewMatrix(viewMatrixForMiddleBoundaries);
 
 		glBindTexture(GL_TEXTURE_2D, middleBoundaries);
-		//float vertices2[] = { -.15, -.15, .15, -.15, .15, .15, -.15, -.15, .15, .15, -.15, .15 };
 		float vertices3[] = { -.03, -.945, .03, -.945, .03, .945, -.03, -.945, .03, .945, -.03, .945 };
 		glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices3);
 		glEnableVertexAttribArray(program.positionAttribute);
@@ -435,13 +431,20 @@ int main(int argc, char *argv[])
 		if (firstLoop)
 		{
 			modelMatrixForBall.setPosition(0, -.5f, 0);
-			//modelMatrixForBall.Translate(speed, speed, 0);
+			modelMatrixForBall.Translate(0, speed, 0);
 		}
 		firstLoop = false;
 
 		
 
-		//if ()
+		if (bottomOfTopBoundary - yPos < .11f)
+		{
+			modelMatrixForBall.Translate(0, -speed, 0);
+		}
+		else if (yPos - (-bottomOfTopBoundary) < .02f)
+		{
+			modelMatrixForBall.Translate(0, speed, 0);
+		}
 
 
 
@@ -458,13 +461,16 @@ int main(int argc, char *argv[])
 
 		if ((rightPaddleXPos) - xPos > .045f && !firstLoop && lessThan)
 		{
+			
 			modelMatrixForBall.Translate(speed, 0, 0);
 			xPos += speed;
+			//yPos -= speed*.707;
 		}
 		else if ((rightPaddleXPos)-xPos < .045f && ((yPos > rightPaddlePos + rightPaddleDeltaY) || (yPos < rightPaddlePos - rightPaddleDeltaY)) && lessThan)
 		{
 			modelMatrixForBall.Translate(speed, 0, 0);
 			xPos += speed;
+			//yPos -= speed*.707;
 
 		}
 		else if (lessThan)
@@ -492,12 +498,12 @@ int main(int argc, char *argv[])
 		}
 		if (xPos > 1)
 		{
-			std::cout << "PLAYER 2 WINS!!!!!!!!!!!!!" << std::endl;
+			winner = false;
 			break;
 		}
 		else if (xPos < -1 )
 		{
-			std::cout << "PLAYER 1 WINS!!!!!!!!!!!!!" << std::endl;
+			winner = true;
 			break;
 
 		}
@@ -510,6 +516,16 @@ int main(int argc, char *argv[])
 
 
 	}
+
+	if (winner)
+	{
+		std::cout << "PLAYER 1 WINS!!!!!!!!!!!!!!!!!!!" << std::endl;
+	}
+	else
+	{
+		std::cout << "PLAYER 2 WINS!!!!!!!!!!!!!!!!!!!" << std::endl;
+	}
+	//std::cin.get();
 	
 	SDL_Quit();
 	return 0;
