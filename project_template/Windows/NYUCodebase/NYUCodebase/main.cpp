@@ -1,4 +1,4 @@
-#ifdef _WIN32
+#ifdef _WINDOWS
 	#define _CRT_SECURE_NO_WARNINGS
 #endif
 #include <stdio.h>
@@ -119,12 +119,13 @@ public:
 int main(int argc, char *argv[])
 {
 	//allows me to print to the console. Only affects windows users.
-	AllocConsole();
-	freopen("CONIN$", "r", stdin);
-	freopen("CONOUT$", "w", stdout);
-	freopen("CONOUT$", "w", stderr);
+	#ifdef _WINDOWS
+		AllocConsole();
+		freopen("CONIN$", "r", stdin);
+		freopen("CONOUT$", "w", stdout);
+		freopen("CONOUT$", "w", stderr);
 	//===============================================================================================================================================
-
+	#endif
 
 
 
@@ -524,9 +525,13 @@ int main(int argc, char *argv[])
 	else
 	{
 		std::cout << "PLAYER 2 WINS!!!!!!!!!!!!!!!!!!!" << std::endl;
+
 	}
-	//std::cin.get();
-	
+	#ifdef _WIN32
+		std::cin.get();
+	#endif
+
+
 	SDL_Quit();
 	return 0;
 }
