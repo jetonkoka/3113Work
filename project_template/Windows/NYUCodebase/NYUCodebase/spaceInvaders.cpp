@@ -12,6 +12,7 @@
 #include "Matrix.h"
 #include <vector>
 #include <string>
+#include <SDL_mixer.h>
 
 #ifdef _WINDOWS
 #define RESOURCE_FOLDER ""
@@ -111,7 +112,7 @@ public:
 	bool shouldRemoveBullet();
 	void update(float elapsed);
 	int collide(std::vector<Entity>& theEnemies);
-	Bullet(float X, float Y, float Width, float Angle = 0, float Speed = 1.5f) :x(X), y(Y), angle(Angle), speed(Speed), width(Width)
+	Bullet(float X, float Y, float Width, float Angle = 0, float Speed = .4f) :x(X), y(Y), angle(Angle), speed(Speed), width(Width)
 	{
 		
 	}
@@ -185,13 +186,10 @@ int Bullet::collide(std::vector<Entity>& theEnemies)
 	{
 		
 
-		if (std::fabs( x - (theEnemies[i].x ) )< .1f)
+		if (std::fabs( x - (theEnemies[i].x ) )< .15f)
 		{
-			std::cout << "WE're IN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-			if (std::fabs(y - (theEnemies[i].y))< .1f)
+			if (std::fabs(y - (theEnemies[i].y))< .15f)
 			{
-				std::cout << "THE HEIGHT FOR BULLET" << y << std::endl;
-				std::cout << "THE HEIGHT FOR Enemy" << theEnemies[i].y << std::endl;
 				return i;
 			}
 		}
@@ -395,13 +393,15 @@ int main(int argc, char *argv[])
 {
 
 	//allows me to print to the console. only affects windows users.
-	/*#ifdef _windows
-		allocconsole();
+	#ifdef _WIN32
+		AllocConsole();
 		freopen("conin$", "r", stdin);
 		freopen("conout$", "w", stdout);
 		freopen("conout$", "w", stderr);
 	#endif
-*/
+
+
+	
 
 
 	float lastFrameTicks = 0.0f;
@@ -460,7 +460,6 @@ int main(int argc, char *argv[])
 	Entity enemy7 = Entity(0.4f, 1.3f, 0.0f, theEntireSpriteSheet, enemyBlack.width, enemyBlack.height*.25, 0, 1, 1);
 	Entity enemy10 = Entity(0.8f, 1.3f, 0.0f, theEntireSpriteSheet, enemyBlack.width, enemyBlack.height*.25, 0, 1, 1);
 
-	std::cout << enemyBlack.width << std::endl;
 	//===================================================================================================================================================
 
 
@@ -485,6 +484,27 @@ int main(int argc, char *argv[])
 
 
 
+
+
+
+
+	//======================================================================================================================================================
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+	Mix_Chunk *bulletSound;
+	bulletSound = Mix_LoadWAV("sfx.wav");
+	Mix_Music *music;
+	music = Mix_LoadMUS("space_invaders.mp3");
+	Mix_PlayMusic(music, -1);
+	//======================================================================================================================================================
+
+
+	
+
+
+
+
+
+
 	while (!done) {
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
@@ -494,13 +514,13 @@ int main(int argc, char *argv[])
 		}
 		
 		
-
 		const Uint8 *keys = SDL_GetKeyboardState(NULL);
 		float ticks = (float)SDL_GetTicks() / 1000.0f;
 		float elapsed = ticks - lastFrameTicks;
 		lastFrameTicks = ticks;
 		float velocityForShip = 2 * elapsed;
 		float velocityForEnemies = 0.05f * elapsed;
+		//bulletSound = Mix_LoadWAV("bullet.wav");
 
 
 
@@ -587,11 +607,17 @@ int main(int argc, char *argv[])
 
 			if (keys[SDL_SCANCODE_SPACE])
 			{
+				program->setModelMatrix(modelMatrixForBullet);
+				program->setProjectionMatrix(projectionMatrixForBullet);
+
 				if (theBulletStorage->size() == 0)
 				{
-					Bullet* currBullet = new Bullet(player.x, player.y + 0.1f, bullet.width);
+					Bullet* currBullet = new Bullet(player.x, player.y + .5f, bullet.width);
 					theBulletStorage->push_back(currBullet);
-				
+					modelMatrixForBullet.setPosition(player.x, player.y + .1f, 0);
+					bullet.Draw(program);
+					Mix_PlayChannel(-1, bulletSound, 0);
+
 				}
 			
 			}
@@ -616,12 +642,13 @@ int main(int argc, char *argv[])
 
 	clearTheHeap(theBulletStorage);
 	delete theBulletStorage;
-	//delete program;
-	/*#ifdef _WIN32
+	delete program;
+	#ifdef _WIN32
 		std::cin.get();
-	#endif*/
+	#endif
 	
-
+	Mix_FreeChunk(bulletSound);
+	Mix_FreeMusic(music);
 
 
 	SDL_Quit();
